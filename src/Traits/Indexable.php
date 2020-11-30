@@ -17,7 +17,11 @@ trait Indexable
 
             $result = [];
             foreach($pages as $page) {
-                $page = explode("{{version}}", $page)[1];
+                try {
+                    $page = explode("{{version}}", $page)[1];
+                } catch (\Exception $e) {
+                    continue;
+                }
                 $pageContent = $this->get($version, $page);
 
                 if(! $pageContent)
@@ -57,7 +61,7 @@ trait Indexable
         $path = base_path(config('larecipe.docs.path').'/'.$version.'/index.md');
 
         // match all markdown urls => [title](url)
-        preg_match_all('/\(([^)]+)\)/', $this->files->get($path), $matches);
+        preg_match_all('/]\(([^)]+)\)/', $this->files->get($path), $matches);
 
         return $matches[1];
     }
